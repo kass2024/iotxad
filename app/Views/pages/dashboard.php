@@ -744,6 +744,21 @@
 		};
 	}
 
+	// Suppress console errors for Chart.js issues
+	var originalConsoleError = console.error;
+	console.error = function() {
+		// Filter out specific Chart.js warnings
+		var message = arguments[0];
+		if (typeof message === 'string' && (
+			message.includes('crosshairs.width') || 
+			message.includes('followCursor option') ||
+			message.includes('barWidth')
+		)) {
+			return; // Suppress these specific warnings
+		}
+		return originalConsoleError.apply(console, arguments);
+	};
+
 	// Fix Parsley deprecation warning
 	if (typeof window.Parsley !== 'undefined') {
 		// Override deprecated addValidator method
