@@ -113,6 +113,8 @@ $routes->add('api', 'Api::index');
 $routes->add('api/(:any)', 'Api::$1');
 // ✅ Add this line before the wildcard
 $routes->get('home/testEmail', 'Home::testEmail');
+// Handle /x endpoint to prevent 404 errors
+$routes->get('x', 'Home::x');
 $routes->add('(:any)', 'Home::$1');
 $routes->get('/home/editRegno/(:num)', 'Home::editRegno/$1');
 $routes->post('/home/updateRegno/(:num)', 'Home::updateRegno/$1');

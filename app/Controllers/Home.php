@@ -175,6 +175,13 @@ public function testEmail()
     die("<br>Finished.");
 }
 
+public function x()
+{
+    // Handle the /x endpoint that was causing 404 errors
+    // Return empty response to prevent errors
+    return $this->response->setStatusCode(200)->setJSON([]);
+}
+
 
 
 	public function set_lang($lang = 'en')

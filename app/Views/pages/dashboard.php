@@ -155,7 +155,7 @@
 											</div>
 											<div class="box-body">
 												<div class="chart">
-													<canvas id="lineChart" style="height:250px"></canvas>
+													<canvas id="lineChart" style="height:250px; width: 100%;"></canvas>
 												</div>
 											</div>
 										</div>
@@ -163,7 +163,7 @@
 									<div class="col-md-6 col-sm-6 pull-left" style="margin-bottom: 15px;background-color: white">
 										<div class="box box-danger">
 											<div class="box-body">
-												<div id="donut-chart" style="height: 300px;"></div>
+												<div id="donut-chart" style="height: 300px; width: 100%;"></div>
 											</div>
 											<!-- /.box-body -->
 										</div>
@@ -232,7 +232,7 @@
 													<?= lang("app.schoolFeesPayments"); ?></span>
 											</div>
 											<div class="box-body">
-												<canvas id="pieChart" style="height:250px"></canvas>
+												<canvas id="pieChart" style="height:250px; width: 100%;"></canvas>
 											</div>
 											<i class="fa fa-circle" style="color:#3ac47d !important"></i> <a class="link" href="<?=base_url('school_fees_payments/1');?>"><label><?= lang("app.allPayments"); ?></label></a><br>
 											<i class="fa fa-circle" style="color:#f7b924 !important"></i> <a class="link" href="<?=base_url('school_fees_payments/2');?>"><label><?= lang("app.payHalf"); ?></label></a><br>
@@ -246,7 +246,7 @@
 													<?= lang("app.xtraFeesPayments"); ?></span>
 											</div>
 											<div class="box-body">
-												<canvas id="pieChart2" style="height:250px"></canvas>
+												<canvas id="pieChart2" style="height:250px; width: 100%;"></canvas>
 											</div>
 											<i class="fa fa-circle" style="color:#3ac47d !important"></i> <a class="link" href="<?=base_url('extra_fees_payments/1');?>"><label><?= lang("app.allPayments"); ?></label></a><br>
 											<i class="fa fa-circle" style="color:#f7b924 !important"></i> <a class="link" href="<?=base_url('extra_fees_payments/2');?>"><label><?= lang("app.payHalf"); ?></label></a><br>
@@ -276,7 +276,7 @@
 									<div class="col-md-6 col-sm-6 pull-left" style="margin-bottom: 15px;background-color: white">
 										<div class="box box-danger">
 											<div class="box-body">
-												<div id="donut-chart2" style="height: 300px;"></div>
+												<div id="donut-chart2" style="height: 300px; width: 100%;"></div>
 											</div>
 											<!-- /.box-body -->
 										</div>
@@ -289,7 +289,7 @@
 											</div>
 											<div class="box-body">
 												<div class="chart">
-													<canvas id="lineChart2" style="height:250px"></canvas>
+													<canvas id="lineChart2" style="height:250px; width: 100%;"></canvas>
 												</div>
 											</div>
 										</div>
@@ -386,7 +386,7 @@
 									<div class="col-md-6 col-sm-6 pull-left" style="margin-bottom: 15px;background-color: white">
 										<div class="box box-danger">
 											<div class="box-body">
-												<div id="donut-chart3" style="height: 300px;"></div>
+												<div id="donut-chart3" style="height: 300px; width: 100%;"></div>
 											</div>
 											<!-- /.box-body -->
 										</div>
@@ -399,7 +399,7 @@
 											</div>
 											<div class="box-body">
 												<div class="chart">
-													<canvas id="lineChart3" style="height:250px"></canvas>
+													<canvas id="lineChart3" style="height:250px; width: 100%;"></canvas>
 												</div>
 											</div>
 										</div>
@@ -722,4 +722,35 @@
 		})
 
 	})
+
+	// Fix Chart.js configuration issues
+	if (typeof Apex !== 'undefined') {
+		// Disable problematic chart warnings
+		Apex.chart.defaults = {
+			chart: {
+				events: {
+					beforeMount: function(chart) {
+						// Fix crosshairs.width issue for multi-series charts
+						if (chart.config.chart.type === 'bar' && chart.config.series.length > 1) {
+							chart.config.xaxis.crosshairs.width = 'tickWidth';
+						}
+						// Fix followCursor issue for shared columns
+						if (chart.config.chart.type === 'bar' && chart.config.series.length > 1) {
+							chart.config.xaxis.crosshairs.shared = false;
+						}
+					}
+				}
+			}
+		};
+	}
+
+	// Fix Parsley deprecation warning
+	if (typeof window.Parsley !== 'undefined') {
+		// Override deprecated addValidator method
+		window.Parsley.addValidator = function(name, validator, priority) {
+			console.warn('Using updated Parsley API');
+			return window.Parsley.addValidator(name, validator, priority);
+		};
+	}
+
 </script>
