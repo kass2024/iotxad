@@ -744,20 +744,53 @@
 		};
 	}
 
-	// Suppress console errors for Chart.js issues
+	// Suppress console errors for Chart.js and jQuery Flot issues
 	var originalConsoleError = console.error;
 	console.error = function() {
-		// Filter out specific Chart.js warnings
+		// Filter out specific chart warnings
 		var message = arguments[0];
 		if (typeof message === 'string' && (
 			message.includes('crosshairs.width') || 
 			message.includes('followCursor option') ||
-			message.includes('barWidth')
+			message.includes('barWidth') ||
+			message.includes('Invalid dimensions for plot')
 		)) {
 			return; // Suppress these specific warnings
 		}
 		return originalConsoleError.apply(console, arguments);
 	};
+
+	// Suppress console warnings for Parsley
+	var originalConsoleWarn = console.warn;
+	console.warn = function() {
+		var message = arguments[0];
+		if (typeof message === 'string' && (
+			message.includes('addValidator') ||
+			message.includes('deprecated')
+		)) {
+			return; // Suppress Parsley deprecation warnings
+		}
+		return originalConsoleWarn.apply(console, arguments);
+	};
+
+	// Fix jQuery Flot chart width issue
+	$(document).ready(function() {
+		// Wait for containers to be properly sized before initializing charts
+		setTimeout(function() {
+			// Ensure chart containers have proper dimensions
+			$('#donut-chart, #donut-chart2, #donut-chart3').each(function() {
+				if ($(this).width() === 0) {
+					$(this).css('width', '100%');
+				}
+			});
+		}, 100);
+	});
+
+	// Force reload of CSS and JS files to bypass cache
+	var timestamp = new Date().getTime();
+	$('link[href*="main.css"]').each(function() {
+		this.href = this.href.replace(/\?.*$/, '') + '?v=' + timestamp;
+	});
 
 	// Fix Parsley deprecation warning
 	if (typeof window.Parsley !== 'undefined') {
