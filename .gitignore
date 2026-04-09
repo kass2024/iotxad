@@ -127,3 +127,8 @@ nb-configuration.xml
 public/assets/images/signatures/
 /public/somanet_app.apk
 /public/somanet_attandance_app.apk
+#-------------------------
+# Custom Ignored Folders
+#-------------------------
+version/
+version1/
