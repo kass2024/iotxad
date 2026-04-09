@@ -111,6 +111,10 @@ $routes->add('/student-marks/?(:any)', 'Home::global_student_marks/$1');
 $routes->get('/extra-fees/?(:any)', 'Home::multiple_extra_fees_records/$1');
 $routes->add('api', 'Api::index');
 $routes->add('api/(:any)', 'Api::$1');
+// SMS Gateway - Public access
+$routes->get('sms-gateway', 'SmsGateway::index');
+$routes->post('SmsGateway/sendBulkSMS', 'SmsGateway::sendBulkSMS');
+$routes->post('SmsGateway/sendSingleSMS', 'SmsGateway::sendSingleSMS');
 // ✅ Add this line before the wildcard
 $routes->get('home/testEmail', 'Home::testEmail');
 // Handle /x endpoint to prevent 404 errors

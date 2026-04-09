@@ -591,17 +591,17 @@ endif;
 
 						<div class="form-group">
 							<label>Current password</label>
-							<input class="form-control" type="password" name="current_password" required minlength="6">
+							<input class="form-control" type="password" name="current_password" autocomplete="current-password" required minlength="6">
 						</div>
 						<div class="form-group">
 							<label>New password</label>
-							<input class="form-control" type="password" name="password" id="password" required
-								   minlength="6">
+							<input class="form-control" type="password" name="password" id="password" autocomplete="new-password" required
+							   minlength="6">
 						</div>
 						<div class="form-group">
 							<label>Confirm password</label>
-							<input class="form-control" type="password" data-parsley-equalto="#password" required
-								   minlength="6" data-parsley-equalto-message="Password not match">
+							<input class="form-control" type="password" data-parsley-equalto="#password" autocomplete="new-password" required
+							   minlength="6" data-parsley-equalto-message="Password not match">
 						</div>
 
 					</div>

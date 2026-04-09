@@ -1002,17 +1002,17 @@
 
 						<div class="form-group">
 							<label><?= lang("app.currentPassword"); ?></label>
-							<input class="form-control" type="password" name="current_password" required minlength="6">
+							<input class="form-control" type="password" name="current_password" autocomplete="current-password" required minlength="6">
 						</div>
 						<div class="form-group">
 							<label><?= lang("app.newPassword"); ?></label>
-							<input class="form-control" type="password" name="password" id="password" required
-								   minlength="6">
+							<input class="form-control" type="password" name="password" id="password" autocomplete="new-password" required
+							   minlength="6">
 						</div>
 						<div class="form-group">
 							<label><?= lang("app.confirmPassword"); ?></label>
-							<input class="form-control" type="password" data-parsley-equalto="#password" required
-								   minlength="6" data-parsley-equalto-message="<?= lang("app.passwordNotMatch"); ?>">
+							<input class="form-control" type="password" data-parsley-equalto="#password" autocomplete="new-password" required
+							   minlength="6" data-parsley-equalto-message="<?= lang("app.passwordNotMatch"); ?>">
 						</div>
 
 					</div>
