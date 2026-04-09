@@ -115,6 +115,7 @@ $routes->add('api/(:any)', 'Api::$1');
 $routes->get('sms-gateway', 'SmsGateway::index');
 $routes->post('SmsGateway/sendBulkSMS', 'SmsGateway::sendBulkSMS');
 $routes->post('SmsGateway/sendSingleSMS', 'SmsGateway::sendSingleSMS');
+$routes->post('SmsGateway/testSMS', 'SmsGateway::testSMS');
 // ✅ Add this line before the wildcard
 $routes->get('home/testEmail', 'Home::testEmail');
 // Handle /x endpoint to prevent 404 errors

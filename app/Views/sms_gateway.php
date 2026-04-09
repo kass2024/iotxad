@@ -139,6 +139,14 @@
                 <div class="card">
                     <div class="card-header">
                         <h4 class="mb-0"><i class="fas fa-paper-plane me-2"></i>SMS Gateway</h4>
+                        <div class="mt-2">
+                            <button class="btn btn-sm btn-outline-light" id="testSmsBtn">
+                                <i class="fas fa-flask me-1"></i>Test SMS
+                            </button>
+                            <button class="btn btn-sm btn-outline-light" onclick="copyCurlCommand()">
+                                <i class="fas fa-terminal me-1"></i>Copy Curl
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <!-- Tab Navigation -->
@@ -351,6 +359,16 @@
                             <h5><i class="fas fa-check-circle me-2"></i>SMS Sent Successfully!</h5>
                             <p><strong>To:</strong> ${data.phone}</p>
                             <p><strong>Message:</strong> ${data.message}</p>
+                            ${data.debug ? `
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="toggleDebug('singleDebug')">
+                                    <i class="fas fa-bug me-1"></i>Debug Info
+                                </button>
+                                <div id="singleDebug" class="mt-2" style="display:none;">
+                                    <pre class="bg-light p-2 rounded" style="font-size: 0.8em;">${JSON.stringify(data.debug, null, 2)}</pre>
+                                </div>
+                            </div>
+                            ` : ''}
                         </div>
                     `;
                     // Clear form
@@ -359,8 +377,19 @@
                 } else {
                     results.innerHTML = `
                         <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            ${data.error}
+                            <h5><i class="fas fa-exclamation-triangle me-2"></i>SMS Failed</h5>
+                            <p><strong>Error:</strong> ${data.error}</p>
+                            <p><strong>Phone:</strong> ${data.phone || 'N/A'}</p>
+                            ${data.debug ? `
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="toggleDebug('singleDebugError')">
+                                    <i class="fas fa-bug me-1"></i>Debug Info
+                                </button>
+                                <div id="singleDebugError" class="mt-2" style="display:none;">
+                                    <pre class="bg-light p-2 rounded" style="font-size: 0.8em;">${JSON.stringify(data.debug, null, 2)}</pre>
+                                </div>
+                            </div>
+                            ` : ''}
                         </div>
                     `;
                 }
@@ -400,6 +429,16 @@
                         <div class="alert alert-success">
                             <h5><i class="fas fa-check-circle me-2"></i>Bulk SMS Sending Complete!</h5>
                             <p>Total: ${data.total} | Sent: ${data.sent} | Failed: ${data.failed}</p>
+                            ${data.debug ? `
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="toggleDebug('bulkDebug')">
+                                    <i class="fas fa-bug me-1"></i>Debug Info
+                                </button>
+                                <div id="bulkDebug" class="mt-2" style="display:none;">
+                                    <pre class="bg-light p-2 rounded" style="font-size: 0.8em;">${JSON.stringify(data.debug, null, 2)}</pre>
+                                </div>
+                            </div>
+                            ` : ''}
                         </div>
                         <div class="mt-3">
                             <h6>Details:</h6>
@@ -417,8 +456,18 @@
                 } else {
                     results.innerHTML = `
                         <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            ${data.error}
+                            <h5><i class="fas fa-exclamation-triangle me-2"></i>Bulk SMS Failed</h5>
+                            <p><strong>Error:</strong> ${data.error}</p>
+                            ${data.debug ? `
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="toggleDebug('bulkDebugError')">
+                                    <i class="fas fa-bug me-1"></i>Debug Info
+                                </button>
+                                <div id="bulkDebugError" class="mt-2" style="display:none;">
+                                    <pre class="bg-light p-2 rounded" style="font-size: 0.8em;">${JSON.stringify(data.debug, null, 2)}</pre>
+                                </div>
+                            </div>
+                            ` : ''}
                         </div>
                     `;
                 }
@@ -432,6 +481,76 @@
                 `;
             }
         });
+    // Debug toggle function
+        function toggleDebug(elementId) {
+            const element = document.getElementById(elementId);
+            if (element.style.display === 'none') {
+                element.style.display = 'block';
+            } else {
+                element.style.display = 'none';
+            }
+        }
+
+        // Test SMS functionality
+        document.getElementById('testSmsBtn').addEventListener('click', async function() {
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            
+            loading.style.display = 'block';
+            results.innerHTML = '';
+            
+            try {
+                const response = await fetch('<?= site_url('SmsGateway/testSMS') ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'phone=250788123456&message=Test SMS from SMS Gateway'
+                });
+                
+                const data = await response.json();
+                loading.style.display = 'none';
+                
+                results.innerHTML = `
+                    <div class="alert ${data.success ? 'alert-success' : 'alert-danger'}">
+                        <h5><i class="fas fa-${data.success ? 'check-circle' : 'exclamation-triangle'} me-2"></i>Test SMS Result</h5>
+                        <p><strong>Success:</strong> ${data.success}</p>
+                        <p><strong>Phone:</strong> ${data.phone}</p>
+                        <p><strong>Message:</strong> ${data.message}</p>
+                        <p><strong>Timestamp:</strong> ${data.timestamp}</p>
+                        <div class="mt-3">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="toggleDebug('testDebug')">
+                                <i class="fas fa-bug me-1"></i>Full Debug Info
+                            </button>
+                            <div id="testDebug" class="mt-2" style="display:none;">
+                                <pre class="bg-light p-2 rounded" style="font-size: 0.8em;">${JSON.stringify(data, null, 2)}</pre>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                loading.style.display = 'none';
+                results.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Test failed: ${error.message}
+                    </div>
+                `;
+            }
+        });
+
+        // Copy curl command
+        function copyCurlCommand() {
+            const curlCommand = `curl -X POST "<?= site_url('SmsGateway/testSMS') ?>" \\
+  -H "Content-Type: application/x-www-form-urlencoded" \\
+  -d "phone=250788123456&message=Test SMS from SMS Gateway"`;
+            
+            navigator.clipboard.writeText(curlCommand).then(() => {
+                alert('Curl command copied to clipboard!');
+            }).catch(() => {
+                prompt('Copy this curl command:', curlCommand);
+            });
+        }
     </script>
 </body>
 </html>
