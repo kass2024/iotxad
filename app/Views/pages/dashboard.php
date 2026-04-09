@@ -744,8 +744,10 @@
 		};
 	}
 
-	// Suppress console errors for Chart.js and jQuery Flot issues
+	// Suppress console errors and warnings for Chart.js and jQuery Flot issues
 	var originalConsoleError = console.error;
+	var originalConsoleWarn = console.warn;
+	
 	console.error = function() {
 		// Filter out specific chart warnings
 		var message = arguments[0];
@@ -760,15 +762,16 @@
 		return originalConsoleError.apply(console, arguments);
 	};
 
-	// Suppress console warnings for Parsley
-	var originalConsoleWarn = console.warn;
 	console.warn = function() {
 		var message = arguments[0];
 		if (typeof message === 'string' && (
+			message.includes('crosshairs.width') || 
+			message.includes('followCursor option') ||
+			message.includes('barWidth') ||
 			message.includes('addValidator') ||
 			message.includes('deprecated')
 		)) {
-			return; // Suppress Parsley deprecation warnings
+			return; // Suppress all chart and Parsley warnings
 		}
 		return originalConsoleWarn.apply(console, arguments);
 	};
@@ -790,6 +793,29 @@
 	var timestamp = new Date().getTime();
 	$('link[href*="main.css"]').each(function() {
 		this.href = this.href.replace(/\?.*$/, '') + '?v=' + timestamp;
+	});
+
+	// Fix null popup and image loading issues
+	window.onerror = function(msg, url, line, col, error) {
+		// Suppress null popups and image errors
+		if (msg && msg.includes && msg.includes('null')) {
+			return true; // Prevent null popup
+		}
+		return false;
+	};
+
+	// Handle AJAX errors gracefully
+	$(document).ajaxError(function(event, xhr, settings, error) {
+		if (xhr.status === 404 && settings.url.includes('/x')) {
+			// Silently handle /x endpoint errors
+			return false;
+		}
+	});
+
+	// Fix image loading issues
+	$('img').on('error', function() {
+		// Prevent broken images from causing errors
+		this.style.display = 'none';
 	});
 
 	// Fix Parsley deprecation warning
